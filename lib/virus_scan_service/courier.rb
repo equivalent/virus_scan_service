@@ -8,8 +8,8 @@ module VirusScanService
   class Courier
     RequestNotSuccessful = Class.new(StandardError)
 
-    attr_reader :token, :logger
-    attr_accessor :num_of_scans
+    attr_reader :token
+    attr_accessor :num_of_scans, :logger
 
     def initialize(options)
       @token      = options.fetch(:token)
@@ -82,7 +82,7 @@ module VirusScanService
     end
 
     def json(body)
-      logger.debugger "Response body #{body}"
+      logger.debug "Response body #{body}"
       JSON.parse(body)
     end
 

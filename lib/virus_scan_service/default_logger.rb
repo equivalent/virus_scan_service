@@ -4,7 +4,7 @@ module VirusScanService
       puts msg
     end
 
-    def debugger(msg)
+    def debug(msg)
       puts msg
     end
   end
