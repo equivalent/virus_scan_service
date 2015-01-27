@@ -8,7 +8,9 @@ module VirusScanService
 
     def call
       pull_file
-      run_scan
+
+      # @todo run_scan
+      
       @result = 'Clean'
       return result
     end

@@ -6,7 +6,7 @@ TODO: Write a gem description
 
 Add this line to your application's Gemfile:
 
-    gem 'virus_scan_service'
+    gem 'virus_scan_service', github: 'equivalent/virus_scan_service'
 
 And then execute:
 
