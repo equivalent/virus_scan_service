@@ -6,24 +6,33 @@ module VirusScanService
     include BuildHttp
 
     attr_reader :url, :result
-    attr_accessor :scan_log_path
+    attr_accessor :scan_log_path, :scan_folder
 
     def initialize(url)
       @url = url
+      @scan_folder = Pathname.new('/tmp')
     end
 
     def call
       pull_file
-      scan_file
-      set_result
+      begin
+        scan_file
+        set_result
+      ensure
+        remove_file
+      end
       nil
     end
 
     def scan_file_path
-      Pathname.new('.').join('tmp').join(filename)
+      scan_folder.join(filename)
     end
 
     private
+
+    def remove_file
+      FileUtils.rm_r(scan_file_path)
+    end
 
     def set_result
       result = File.read(scan_log_path || raise(ScanLogPathNotSet))

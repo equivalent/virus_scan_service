@@ -27,30 +27,37 @@ RSpec.describe VirusScanService::KasperskyRunner do
   before do
     allow(runner)
       .to receive(:system)
-      .with("avp.com SCAN tmp/file.png /i4 /fa /RA:#{scan_log}")
+      .with("avp.com SCAN /tmp/file.png /i4 /fa /RA:#{scan_log}")
       .and_return(nil)
   end
 
-  after do
-    FileUtils.rm_r(runner.scan_file_path)
-  end
-
   describe "#call" do
-    let(:runner_autorun) { true }
-    before { runner.call if runner_autorun}
+    let(:call) { runner.call }
 
-    it 'downloads the file from net' do
-      expect(File.read(runner.scan_file_path))
-        .to eq "This-is-a-file-content"
+    context '' do
+      before { allow(runner).to receive(:remove_file) } # skip file remove
+
+      it 'downloads the file from net' do
+        call
+        expect(File.read(runner.scan_file_path))
+          .to eq "This-is-a-file-content"
+      end
+    end
+
+    it 'should remove scanned file' do
+      call
+      expect(File.exist?(runner.scan_file_path)).to be false
     end
 
     context 'when no threats detected' do
+      before { call }
       it 'sets the result' do
         expect(runner.result).to eq 'Clean'
       end
     end
 
     context 'when virus detected' do
+      before { call }
       let(:scan_log) {
         spec_root
           .join('fixtures')
@@ -63,8 +70,6 @@ RSpec.describe VirusScanService::KasperskyRunner do
     end
 
     context 'when log has error' do
-      let(:runner_autorun) { false }
-
       let(:scan_log) {
         spec_root
           .join('fixtures')
