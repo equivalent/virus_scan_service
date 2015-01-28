@@ -31,7 +31,9 @@ module VirusScanService
     private
 
     def remove_file
-      FileUtils.rm_r(scan_file_path)
+      # kaspersky is automatically removing suspicious file,
+      # this will ensure that all files are erased after check
+      FileUtils.rm_r(scan_folder.join(filename)) if File.exist?(scan_folder.join(filename))
     end
 
     def set_result
