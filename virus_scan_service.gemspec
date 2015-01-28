@@ -8,8 +8,11 @@ Gem::Specification.new do |spec|
   spec.version       = VirusScanService::VERSION
   spec.authors       = ["Tomas Valent"]
   spec.email         = ["equivalent@eq8.eu"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Servce gem for triggering Virus checks}
+  spec.description   = 'Gem contains runner that will pull JSON request ' +
+                       'with list of files to scan, and run antivirus check ' +
+                       'on that file. After that runner will send JSON PUT ' +
+                       'request with scan results'
   spec.homepage      = ""
   spec.license       = "MIT"
 

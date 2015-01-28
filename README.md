@@ -1,6 +1,7 @@
 # VirusScanService
 
-TODO: Write a gem description
+Development in progress
+
 
 ## Installation
 
