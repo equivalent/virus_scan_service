@@ -2,11 +2,13 @@
 #
 #  VirusScansService
 #   .new(token: 'abcdefg', host: 'https://212.95.239.252')
-#   .scan(1)
+#   .call
 #
 module VirusScanService
   class Courier
     RequestNotSuccessful = Class.new(StandardError)
+
+    include BuildHttp
 
     attr_reader :token
     attr_accessor :num_of_scans, :logger
@@ -68,17 +70,6 @@ module VirusScanService
       check_status(response) {
         response.body  # result JSON
       }
-    end
-
-    def build_http
-      if uri.scheme == 'https'
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = true
-        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-        http
-      else
-        Net::HTTP.new(uri.host, uri.port)
-      end
     end
 
     def json(body)

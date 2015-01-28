@@ -1,23 +1,12 @@
 require 'spec_helper'
 
-class DummyViruscheckRunner
-  attr_accessor :url
-
-  def initialize(url)
-    @url = url
-  end
-
-  def call
-  end
-
-  def result
-    'Clean'
-  end
-end
-
 RSpec.describe VirusScanService::Courier do
+  include RequestResponseMocks
+
   let(:courier) {
-    described_class.new(token: 'abcdefg', host: 'http://thisisa.test')
+    described_class
+      .new(token: 'abcdefg', host: 'http://thisisa.test')
+      .tap { |c| c.logger = Struct::NullLogger.new }
   }
 
   before do

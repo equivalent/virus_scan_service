@@ -1,0 +1,39 @@
+﻿2015-01-27 16:07:41	Scan_Objects$0433         starting   1%         
+; --- Settings ---
+; Action on detect: 	Disinfect automatically
+; Scan objects:     	All objects
+; Use iChecker:     	Yes
+; Use iSwift:       	Yes
+; Try disinfect:    	No
+; Try delete:       	Yes
+; Try delete container:	Yes
+; Exclude by mask:  	No
+; Include by mask:  	No
+; Objects to scan:  	
+; 	"C:\Users\David\Downloads\Ebuyer-Invoice.pdf"	Enable=Yes	Recursive=No
+; ------------------
+2015-01-27 16:07:41	C:\Users\David\Downloads\Ebuyer-Invoice.pdf	ok (iSwift)
+2015-01-27 16:07:41	Scan_Objects$0433         running    100%       
+2015-01-27 16:07:41	Scan_Objects$0433         completed             
+;  --- Statistics ---
+;  Current time:  	2015-01-27 16:07:41
+; Time Start:       	2015-01-27 16:07:41
+; Time Finish:      	2015-01-27 16:07:41
+; Completion:       	100%
+; Processed objects:	1
+; Total detected:   	0
+; Detected exact:   	0
+; Suspicions:       	0
+; Treats detected:  	0
+; Untreated:        	0
+; Disinfected:      	0
+; Quarantined:      	0
+; Deleted:          	0
+; Skipped:          	0
+; Archived:         	0
+; Packed:           	0
+; Password protected:	0
+; Corrupted:        	0
+; Errors:           	0
+; Last object:      	
+;  ------------------
