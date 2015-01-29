@@ -5,12 +5,13 @@ module VirusScanService
 
     include BuildHttp
 
-    attr_reader :url, :result
-    attr_accessor :scan_log_path, :scan_folder
+    attr_reader   :url, :result
+    attr_writer   :scan_folder, :archive_folder
+    attr_accessor :scan_log_path, :timestamp_builder
 
     def initialize(url)
       @url = url
-      @scan_folder = Pathname.new('/tmp')
+      @timestamp_builder = ->{ Time.now.to_i.to_s }
     end
 
     def call
@@ -20,6 +21,7 @@ module VirusScanService
         set_result
       ensure
         remove_file
+        archive_scan_log if File.exist?(scan_log_path)
       end
       nil
     end
@@ -28,12 +30,47 @@ module VirusScanService
       scan_folder.join(filename)
     end
 
+    def scan_folder
+      @scan_folder ||= Pathname
+        .new('/tmp')
+        .join('scans')
+        .tap do |path|
+          FileUtils.mkdir_p(path)
+        end
+    end
+
+    def archive_folder
+      @archive_folder ||= Pathname
+        .new('/tmp')
+        .join('scans')
+        .tap do |path|
+          FileUtils.mkdir_p(path)
+        end
+    end
+
     private
+    def archive_scan_log
+      archive_name = "#{File.basename(scan_log_path.to_s, '.*')}_#{timestamp_builder.call}.log"
+      FileUtils.mv(scan_log_path, archive_folder.join(archive_name))
+    end
 
     def remove_file
-      # kaspersky is automatically removing suspicious file,
-      # this will ensure that all files are erased after check
-      FileUtils.rm_r(scan_folder.join(filename)) if File.exist?(scan_folder.join(filename))
+      begin
+        FileUtils.rm_r(scan_folder.join(filename))
+      rescue => e
+        # kaspersky is automatically removing suspicious files
+        # this is rescue ensures that after kasperky removes that file
+        # script wont blow up
+        #
+        # For whatever reason under Windows using
+        #
+        #   if File.exist?(scan_folder.join(filename))
+        #
+        # wont help to determin if file was removed by kaspersky
+        #
+        # That's why this captures if exception matches Permission deny @ unlink_internal
+        raise e unless e.to_s.match('unlink_internal') 
+      end
     end
 
     def set_result

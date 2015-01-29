@@ -5,7 +5,20 @@ RSpec.describe VirusScanService::KasperskyRunner do
   let(:runner) {
     described_class
       .new('http://thisis.test/download/file.png')
-      .tap { |runner| runner.scan_log_path = scan_log }
+      .tap do |runner|
+        runner.timestamp_builder = ->{ '012345678' }
+        runner.scan_log_path = 'spec/tmp/kaspersky_test.log'
+        runner.scan_folder = Pathname
+          .new('spec')
+          .join('tmp')
+          .join('scans')
+          .tap do |path| FileUtils.mkdir_p(path) end
+        runner.archive_folder = Pathname
+          .new('spec')
+          .join('tmp')
+          .join('scans_archive')
+          .tap do |path| FileUtils.mkdir_p(path) end
+      end
   }
 
   let(:scan_log) {
@@ -25,10 +38,19 @@ RSpec.describe VirusScanService::KasperskyRunner do
   end
 
   before do
+    FileUtils.mkdir_p('tmp')
+    FileUtils.cp(scan_log, 'spec/tmp/kaspersky_test.log')
+
     allow(runner)
       .to receive(:system)
-      .with("avp.com SCAN /tmp/file.png /i4 /fa /RA:#{scan_log}")
+      .with("avp.com SCAN spec/tmp/scans/file.png /i4 /fa /RA:spec/tmp/kaspersky_test.log")
       .and_return(nil)
+  end
+
+  after do
+    if File.exist?("spec/tmp/scans_archive/kaspersky_test_012345678.log")
+      FileUtils.rm "spec/tmp/scans_archive/kaspersky_test_012345678.log"
+    end
   end
 
   describe "#call" do
@@ -47,6 +69,12 @@ RSpec.describe VirusScanService::KasperskyRunner do
     it 'should remove scanned file' do
       call
       expect(File.exist?(runner.scan_file_path)).to be false
+    end
+
+    it 'should archive scan log' do
+      call
+      expect(File.exist?('spec/tmp/kaspersky_test.log')).to be false
+      expect(File.exist?("spec/tmp/scans_archive/kaspersky_test_012345678.log")).to be true
     end
 
     context 'when no threats detected' do
