@@ -17,6 +17,7 @@ module VirusScanService
     def call
       pull_file
       begin
+        ensure_no_scan_log_exist
         scan_file
         set_result
       ensure
@@ -69,8 +70,12 @@ module VirusScanService
         # wont help to determin if file was removed by kaspersky
         #
         # That's why this captures if exception matches Permission deny @ unlink_internal
-        raise e unless e.to_s.match('unlink_internal') 
+        raise e unless e.to_s.match('unlink_internal')
       end
+    end
+
+    def ensure_no_scan_log_exist
+      FileUtils.rm scan_log_path if File.exist?(scan_log_path)
     end
 
     def set_result
