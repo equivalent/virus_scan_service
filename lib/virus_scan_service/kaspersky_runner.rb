@@ -6,6 +6,7 @@ module VirusScanService
     ScanLogPathNotSet = Class.new(StandardError)
     ScanLogParseError = Class.new(StandardError)
     AntivirusExecNotSet = Class.new(StandardError)
+    RequestNotSuccessful = Class.new(StandardError)
 
     include BuildHttp
 
@@ -19,16 +20,20 @@ module VirusScanService
     end
 
     def call
-      pull_file
       begin
-        ensure_no_scan_log_exist
-        scan_file
-        set_result
-      ensure
-        remove_file
-        archive_scan_log if File.exist?(scan_log_path)
+        pull_file
+        begin
+          ensure_no_scan_log_exist
+          scan_file
+          set_result
+        ensure
+          remove_file
+          archive_scan_log if File.exist?(scan_log_path)
+        end
+      rescue URI::InvalidURIError, RequestNotSuccessful
+        set_result_download_error
       end
-      nil
+      return nil
     end
 
     def scan_file_path
@@ -97,6 +102,10 @@ module VirusScanService
       raise ScanLogParseError if @result.nil?
     end
 
+    def set_result_download_error
+      @result = 'FileDownloadError'
+    end
+
     def scan_file
       (antivirus_exec || raise(AntivirusExecNotSet))
         .scan(scan_file_path, scan_log_path)
@@ -107,6 +116,9 @@ module VirusScanService
 
       request = Net::HTTP::Get.new(uri.to_s)
       response = http.request(request)
+
+      raise(RequestNotSuccessful) unless response.class == Net::HTTPOK
+
       open(scan_file_path, 'wb') do |file|
         file.write(response.body)
         file.close
