@@ -1,9 +1,3 @@
-# Usage example :
-#
-#  VirusScansService
-#   .new(token: 'abcdefg', host: 'https://212.95.239.252')
-#   .call
-#
 module VirusScanService
   class Courier
     RequestNotSuccessful = Class.new(StandardError)

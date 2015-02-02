@@ -1,7 +1,30 @@
 require 'spec_helper'
 require 'fileutils'
+require 'forwardable'
 
 RSpec.describe VirusScanService::KasperskyRunner do
+  class DummyAntivirusRunner
+    extend Forwardable
+
+    attr_reader :spec
+    def_delegator :spec, :expect
+    def_delegator :spec, :eq
+
+    def initialize(spec)
+      @spec = spec
+    end
+
+    def scan(file_path, log_path)
+      expect(file_path.to_s).to eq 'spec/tmp/scans/file.png'
+      expect(log_path.to_s).to eq 'spec/tmp/kaspersky_test.log'
+      #expect(runner.antivirus_exec)
+        #.to receive(:scan)
+        #.with(runner.scan_file_path, runner.scan_log_path)
+        #.and_call_original
+      FileUtils.cp(spec.scan_log, 'spec/tmp/kaspersky_test.log')
+    end
+  end
+
   let(:runner) {
     described_class
       .new('http://thisis.test/download/file.png')
@@ -18,6 +41,7 @@ RSpec.describe VirusScanService::KasperskyRunner do
           .join('tmp')
           .join('scans_archive')
           .tap do |path| FileUtils.mkdir_p(path) end
+        runner.antivirus_exec = DummyAntivirusRunner.new(self)
       end
   }
 
@@ -38,13 +62,6 @@ RSpec.describe VirusScanService::KasperskyRunner do
         .to_return(:status => 200, :body => "This-is-a-file-content", :headers => {})
 
       expect(runner).to receive(:ensure_no_scan_log_exist).and_call_original
-
-      allow(runner)
-        .to receive(:system)
-        .with("avp.com SCAN spec/tmp/scans/file.png /i4 /fa /RA:spec/tmp/kaspersky_test.log") {
-          FileUtils.cp(scan_log, 'spec/tmp/kaspersky_test.log')
-          nil
-        }
     end
 
     after do

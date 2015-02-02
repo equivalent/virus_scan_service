@@ -1,13 +1,17 @@
+require_relative 'kaspersky_runner/linux_executor'
+require_relative 'kaspersky_runner/windows_executor'
+
 module VirusScanService
   class KasperskyRunner
     ScanLogPathNotSet = Class.new(StandardError)
     ScanLogParseError = Class.new(StandardError)
+    AntivirusExecNotSet = Class.new(StandardError)
 
     include BuildHttp
 
     attr_reader   :url, :result
     attr_writer   :scan_folder, :archive_folder
-    attr_accessor :scan_log_path, :timestamp_builder
+    attr_accessor :scan_log_path, :timestamp_builder, :antivirus_exec
 
     def initialize(url)
       @url = url
@@ -94,7 +98,8 @@ module VirusScanService
     end
 
     def scan_file
-      system("avp.com SCAN #{scan_file_path} /i4 /fa /RA:#{scan_log_path}")
+      (antivirus_exec || raise(AntivirusExecNotSet))
+        .scan(scan_file_path, scan_log_path)
     end
 
     def pull_file
