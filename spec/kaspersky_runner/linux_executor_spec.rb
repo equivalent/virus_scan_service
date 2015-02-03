@@ -13,7 +13,7 @@ RSpec.describe VirusScanService::KasperskyRunner::LinuxExecutor do
     it 'should exectute correct command' do
       expect(subject)
         .to receive(:system)
-        .with(desired_cmd.split(' '))
+        .with(*desired_cmd.split(' '))
 
       subject.scan(Pathname.new('/tmp').join('scan_file'), Pathname.new('/tmp').join('bar.log'))
     end
