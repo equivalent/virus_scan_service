@@ -30,7 +30,7 @@ module VirusScanService
     end
 
     def scheduled_scans
-      uri.path = '/virus_scans'
+      uri.path = '/wd/virus_scans'
       logger.info "GET #{uri.to_s}"
 
       http = build_http
@@ -46,7 +46,7 @@ module VirusScanService
     end
 
     def update_scan_result(scan_id, result)
-      uri.path = "/virus_scans/#{scan_id}"
+      uri.path = "/wd/virus_scans/#{scan_id}"
       logger.info "PUT #{uri.to_s}"
 
       http = build_http
