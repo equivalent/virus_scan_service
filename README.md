@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/equivalent/virus_scan_service.svg)](https://travis-ci.org/equivalent/virus_scan_service)
+[![Code Climate](https://codeclimate.com/github/equivalent/virus_scan_service/badges/gpa.svg)](https://codeclimate.com/github/equivalent/virus_scan_service)
+
 # VirusScanService
 
 Development in progress

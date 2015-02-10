@@ -1,3 +1,6 @@
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
+
 require 'virus_scan_service'
 require 'webmock/rspec'
 require 'pathname'
