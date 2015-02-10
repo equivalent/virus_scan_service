@@ -6,6 +6,8 @@ require 'webmock/rspec'
 require 'pathname'
 require 'pry' if ENV['PRY'] # PRY=true rspec spec
 
+WebMock.disable_net_connect!(:allow => "codeclimate.com")
+
 def spec_root
   Pathname.new('./spec')
 end
