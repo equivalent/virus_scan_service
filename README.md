@@ -4,26 +4,62 @@
 
 # VirusScanService
 
-Development in progress
+Service gem that provide virus scan runner that will pull down list of
+files to be scanned from your application server, lunch antivirus check (currently only
+Kasperky Endponit Security runner Windows or Linux) and send scan result
+back to server.
 
+You don't need to have this script running on the same server
+as application server VM. (Article comming soon)
+
+Originaly built to work along [witch_doctor engine gem](https://github.com/equivalent/witch_doctor)
+however that is not required. All your server has to do
+is provide API that this secvice can comunicate with:
+
+#### GET `/wd/virus_scans` `ContentType: application/json`
+
+response
+
+```json
+[{"id":"123","scan_result":"","file_url":"http://thisis.test/download/file.png"}]
+```
+
+#### PUT `/wd/virus_scans/123` `ContentType: application/json`
+
+request body
+
+```json
+{"virus_scan":{"scan_result":"Clean"}}
+```
+
+response
+
+```json
+{"id":"123","scan_result":"Clean","file_url":"http://thisis.test/download/file.png"}
+```
+
+For more examples check `spec/courier_spec.rb`, `spec/support/request_response_mocks.rb
+
+
+## Statuses
+
+* `Clean`
+* `VirusInfected`
+* `FileDownloadError` - couldn't download asset
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add this line to your external script Gemfile:
 
-    gem 'virus_scan_service', github: 'equivalent/virus_scan_service'
+    gem 'virus_scan_service'
 
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install virus_scan_service
-
 ## Usage
 
-TODO: Write usage instructions here
+check https://github.com/equivalent/virus_scan_daemon
 
 ## Contributing
 
