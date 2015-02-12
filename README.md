@@ -9,7 +9,11 @@ files to be scanned from your application server, lunch antivirus check (current
 Kasperky Endponit Security runner Windows or Linux) and send scan result
 back to server.
 
-You don't need to have this script running on the same server
+If you want to use difrent antivirus (like `ClamAV`) that's fine,
+but you will have to implement your own runner `:)`.
+Pull requests are welcome.
+
+You don't need to have script running this service on the same server
 as application server VM. (Article comming soon)
 
 Originaly built to work along [witch_doctor engine gem](https://github.com/equivalent/witch_doctor)
