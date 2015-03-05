@@ -18,8 +18,8 @@ module VirusScanService
       scheduled_scans
         .first(num_of_scans)
         .each do |scheduled_scan|
-          resoult = yield(scheduled_scan.fetch('file_url'))
-          update_scan_result(scheduled_scan.fetch('id'), resoult)
+          result = yield(scheduled_scan.fetch('file_url'))
+          update_scan_result(scheduled_scan.fetch('id'), result)
         end
     end
 
