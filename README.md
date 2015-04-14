@@ -25,7 +25,7 @@ is provide API that this secvice can comunicate with:
 response
 
 ```json
-[{"id":"123","scan_result":"","file_url":"http://thisis.test/download/file.png"}]
+{"data":[{"id":"123","scan_result":"","file_url":"http://thisis.test/download/file.png"}]}
 ```
 
 #### PUT `/wd/virus_scans/123` `ContentType: application/json`
@@ -39,11 +39,14 @@ request body
 response
 
 ```json
-{"id":"123","scan_result":"Clean","file_url":"http://thisis.test/download/file.png"}
+{"data":{"id":"123","scan_result":"Clean","file_url":"http://thisis.test/download/file.png"}}
 ```
 
 For more examples check `spec/courier_spec.rb`, `spec/support/request_response_mocks.rb
 
+## JSON API
+
+gem is implementing [JSON API standard](http://jsonapi.org/)
 
 ## Statuses
 
