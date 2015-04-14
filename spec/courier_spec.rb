@@ -11,11 +11,11 @@ RSpec.describe VirusScanService::Courier do
 
   before do
     server_response_list do
-      '[{"id":"123","scan_result":"","file_url":"http://thisis.test/download/file.png"}]'
+      '{"data":[{"id":"123","scan_result":"","file_url":"http://thisis.test/download/file.png"}]}'
     end
 
     server_request_put(id: 123, status: 'Clean') do
-      '{"id":"123","scan_result":"Clean","file_url":"http://thisis.test/download/file.png"}'
+      '{"data":{"id":"123","scan_result":"Clean","file_url":"http://thisis.test/download/file.png"}}'
     end
   end
 

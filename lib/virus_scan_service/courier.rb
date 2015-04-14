@@ -68,7 +68,9 @@ module VirusScanService
 
     def json(body)
       logger.debug "Response body #{body}"
-      JSON.parse(body)
+      JSON
+        .parse(body)
+        .fetch("data")
     end
 
     def check_status(response)
