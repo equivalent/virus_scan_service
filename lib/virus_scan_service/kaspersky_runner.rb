@@ -89,7 +89,7 @@ module VirusScanService
 
     def set_result
       result = File.read(scan_log_path || raise(ScanLogPathNotSet))
-      result.scan(/Total detected:\s*(\d+)/) do |threat_count, *other|
+      result.scan(/(?:Total detected|Threats found):\s*(\d+)/) do |threat_count, *other|
         if threat_count == ''
           raise ScanLogParseError
         elsif threat_count == '0'

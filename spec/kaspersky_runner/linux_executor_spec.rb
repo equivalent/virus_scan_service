@@ -6,14 +6,14 @@ RSpec.describe VirusScanService::KasperskyRunner::LinuxExecutor do
   let(:desired_cmd) {
     'sudo ' +
     '/opt/kaspersky/kes4lwks/bin/kes4lwks-control ' +
-    '--scan-file /tmp/scan_file >> /tmp/bar.log'
+    '--scan-file /tmp/scan_file'
   }
 
   describe '#scan' do
     it 'should exectute correct command' do
-      expect(subject)
-        .to receive(:system)
-        .with(*desired_cmd.split(' '))
+      expect(Open3)
+        .to receive(:capture3)
+        .with(desired_cmd)
 
       subject.scan(Pathname.new('/tmp').join('scan_file'), Pathname.new('/tmp').join('bar.log'))
     end
