@@ -69,7 +69,7 @@ RSpec.describe VirusScanService::KasperskyRunner do
       end
 
       before do
-        expect(runner).to receive(:ensure_no_scan_log_exist).and_call_original
+        expect(runner).to receive(:empty_scan_log).and_call_original
       end
 
       context '' do
@@ -155,11 +155,11 @@ RSpec.describe VirusScanService::KasperskyRunner do
     end
   end
 
-  describe 'private #ensure_no_scan_log_exist' do
+  describe 'private #empty_scan_log' do
     it 'should existing scan log before scan begin' do
       FileUtils.cp(scan_log, 'spec/tmp/kaspersky_test.log') # pre-existing scan
-      runner.send(:ensure_no_scan_log_exist)
-      expect(File.exist?('spec/tmp/kaspersky_test.log')).to be false
+      runner.send(:empty_scan_log)
+      expect(File.size('spec/tmp/kaspersky_test.log')).to eq 0
     end
   end
 end
