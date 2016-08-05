@@ -1,5 +1,6 @@
 require_relative 'kaspersky_runner/linux_executor'
 require_relative 'kaspersky_runner/windows_executor'
+require 'fileutils'
 
 module VirusScanService
   class KasperskyRunner
@@ -23,12 +24,12 @@ module VirusScanService
       begin
         pull_file
         begin
-          ensure_no_scan_log_exist
+          empty_scan_log
           scan_file
           set_result
         ensure
           remove_file
-          archive_scan_log if File.exist?(scan_log_path)
+          archive_scan_log if File.size?(scan_log_path) # Exists & non-empty
         end
       rescue URI::InvalidURIError, RequestNotSuccessful
         set_result_download_error
@@ -45,7 +46,7 @@ module VirusScanService
         .new('/tmp')
         .join('scans')
         .tap do |path|
-          FileUtils.mkdir_p(path)
+          ::FileUtils.mkdir_p(path)
         end
     end
 
@@ -54,14 +55,14 @@ module VirusScanService
         .new('/tmp')
         .join('scans')
         .tap do |path|
-          FileUtils.mkdir_p(path)
+          ::FileUtils.mkdir_p(path)
         end
     end
 
     private
     def archive_scan_log
       archive_name = "#{File.basename(scan_log_path.to_s, '.*')}_#{timestamp_builder.call}.log"
-      FileUtils.mv(scan_log_path, archive_folder.join(archive_name))
+      ::FileUtils.mv(scan_log_path, archive_folder.join(archive_name))
     end
 
     def remove_file
@@ -76,15 +77,15 @@ module VirusScanService
         #
         #   if File.exist?(scan_folder.join(filename))
         #
-        # wont help to determin if file was removed by kaspersky
+        # won't help to determine if file was removed by kaspersky
         #
         # That's why this captures if exception matches Permission deny @ unlink_internal
         raise e unless e.to_s.match('unlink_internal')
       end
     end
 
-    def ensure_no_scan_log_exist
-      FileUtils.rm scan_log_path if File.exist?(scan_log_path)
+    def empty_scan_log
+      File.open(scan_log_path, 'w') {}
     end
 
     def set_result
